@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Form, Button } from 'semantic-ui-react'
 import Auth from '../auth/Auth'
-import { getUploadUrl, updateImage, uploadFile } from '../api/todos-api'
+import { getUploadUrl, updateImage, uploadFile } from '../api/carts-api'
 
 enum UploadState {
   NoUpload,
@@ -9,25 +9,25 @@ enum UploadState {
   UploadingFile,
 }
 
-interface EditTodoProps {
+interface EditCartProps {
   match: {
     params: {
-      todoId: string
+      cartId: string
     }
   }
   auth: Auth
 }
 
-interface EditTodoState {
+interface EditCartState {
   file: any
   uploadState: UploadState
 }
 
-export class EditTodo extends React.PureComponent<
-  EditTodoProps,
-  EditTodoState
+export class EditCart extends React.PureComponent<
+  EditCartProps,
+  EditCartState
 > {
-  state: EditTodoState = {
+  state: EditCartState = {
     file: undefined,
     uploadState: UploadState.NoUpload
   }
@@ -52,13 +52,13 @@ export class EditTodo extends React.PureComponent<
 
       this.setUploadState(UploadState.FetchingPresignedUrl)
       console.log(this.props.auth.getIdToken())
-      console.log(this.props.match.params.todoId)
+      console.log(this.props.match.params.cartId)
 
-      const uploadUrl = await getUploadUrl(this.props.auth.getIdToken(), this.props.match.params.todoId)
+      const uploadUrl = await getUploadUrl(this.props.auth.getIdToken(), this.props.match.params.cartId)
       console.log(uploadUrl)
       this.setUploadState(UploadState.UploadingFile)
 
-      await updateImage(this.props.auth.getIdToken(), this.props.match.params.todoId)
+      await updateImage(this.props.auth.getIdToken(), this.props.match.params.cartId)
 
       await uploadFile(uploadUrl, this.state.file)
 

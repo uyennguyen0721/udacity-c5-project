@@ -1,8 +1,8 @@
 import * as AWS from 'aws-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { createLogger } from '../utils/logger'
-import { TodoItem } from '../models/TodoItem'
-import { TodoUpdate } from '../models/TodoUpdate';
+import { CartItem } from '../models/CartItem'
+import { CartUpdate } from '../models/CartUpdate';
 var AWSXRay = require('aws-xray-sdk')
 
 const XAWS = AWSXRay.captureAWS(AWS)
@@ -11,21 +11,21 @@ const logger = createLogger('TodosAccess')
 
 // TODO: Implement the dataLayer logic
 
-export class TodosAccess {
+export class CartsAccess {
     constructor(
 
         private readonly docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient(),
-        private readonly todosTable = process.env.TODOS_TABLE,
-        private readonly todosCreatedAtIndex = process.env.INDEX_NAME
+        private readonly cartsTable = process.env.CARTS_TABLE,
+        private readonly cartsCreatedAtIndex = process.env.INDEX_NAME
     ) { }
 
-    async getAllTodos(userId: string): Promise<TodoItem[]> {
+    async getAllCarts(userId: string): Promise<CartItem[]> {
         if (userId) {
             logger.info("Ready to get all todos");
 
-            const todos = await this.docClient.query({
-                TableName: this.todosTable,
-                IndexName: this.todosCreatedAtIndex,
+            const carts = await this.docClient.query({
+                TableName: this.cartsTable,
+                IndexName: this.cartsCreatedAtIndex,
                 KeyConditionExpression: "#userId = :userId",
                 ExpressionAttributeNames: {
                     "#userId": "userId"
@@ -35,90 +35,90 @@ export class TodosAccess {
                 }
             }).promise();
 
-            logger.info(`Query successfully ${todos.Items}`);
+            logger.info(`Query successfully ${carts.Items}`);
 
-            return todos.Items as TodoItem[];
+            return carts.Items as CartItem[];
         } else {
             logger.error(`Unauthenticated operation`);
         }
     }
 
-    async createTodoItem(todo: TodoItem): Promise<TodoItem> {
-        logger.info("Ready to add a new todo")
+    async createCartItem(cart: CartItem): Promise<CartItem> {
+        logger.info("Ready to add a new cart")
 
         const result = await this.docClient.put({
-            TableName: this.todosTable,
-            Item: todo
+            TableName: this.cartsTable,
+            Item: cart
         }).promise();
 
-        logger.info('todo created', result);
+        logger.info('cart created', result);
 
-        return todo as TodoItem;
+        return cart as CartItem;
     }
 
-    public async updateTodo(userId: string, todoId: string, todo: TodoUpdate) {
+    public async updateCart(userId: string, cartId: string, cart: CartUpdate) {
         if (userId) {
-            logger.info(`Found todo ${todoId}, ready for update`);
+            logger.info(`Found cart ${cartId}, ready for update`);
 
             await this.docClient.update({
-                TableName: this.todosTable,
+                TableName: this.cartsTable,
                 Key: {
-                    todoId,
+                    cartId,
                     userId
                 },
-                UpdateExpression: "set #name = :name, #dueDate = :dueDate, #done = :done",
+                UpdateExpression: "set #name = :name, #price = :price, #done = :done",
                 ExpressionAttributeNames: {
                     "#name": "name",
-                    "#dueDate": "dueDate",
+                    "#price": "price",
                     "#done": "done"
                 },
                 ExpressionAttributeValues: {
-                    ":name": todo.name,
-                    ":dueDate": todo.dueDate,
-                    ":done": todo.done
+                    ":name": cart.name,
+                    ":price": cart.price,
+                    ":done": cart.done
                 }
             }).promise();
 
-            logger.info("Updated successfull ", todo)
+            logger.info("Updated successfull ", cart)
         } else {
             logger.error(`Unauthenticated operation`);
         }
     }
 
-    async deleteTodo(userId: string, todoId: string): Promise<string> {
+    async deleteCart(userId: string, cartId: string): Promise<string> {
         if (userId) {
-            logger.info(`Ready to delete todo ${todoId}`);
+            logger.info(`Ready to delete todo ${cartId}`);
 
             const result = await this.docClient.delete({
-                TableName: this.todosTable,
+                TableName: this.cartsTable,
                 Key: {
-                    todoId,
+                    cartId,
                     userId
                 }
             }).promise();
 
             logger.info("Delete successful", result);
 
-            return todoId as string
+            return cartId as string
 
         } else {
             logger.error("Unauthenticated operation");
         }
     }
 
-    async updateTodoAttachmentUrl(
+    async updateCartAttachmentUrl(
         userId: string,
-        todoId: string,
+        cartId: string,
         attachmentUrl: string
 
     ): Promise<void> {
-        logger.info("Update to do attachment url")
+        logger.info("Update cart attachment url")
 
         await this.docClient
             .update({
-                TableName: this.todosTable,
+                TableName: this.cartsTable,
                 Key: {
-                    todoId,
+                    cartId,
                     userId
                 },
                 UpdateExpression: 'set #attachmentUrl = :attachmentUrl',

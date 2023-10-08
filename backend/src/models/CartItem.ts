@@ -1,9 +1,10 @@
-export interface TodoItem {
+export interface CartItem {
   userId: string
-  todoId: string
+  cartId: string
   createdAt: string
   name: string
-  dueDate: string
+  description: string
+  price: string
   done: boolean
   attachmentUrl?: string
 }

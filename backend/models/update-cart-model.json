@@ -6,7 +6,10 @@
     "name": {
       "type": "string"
     },
-    "dueDate": {
+    "description": {
+      "type": "string"
+    },
+    "price": {
       "type": "string"
     },
     "done": {
@@ -15,7 +18,7 @@
   },
   "required": [
     "name",
-    "dueDate",
+    "price",
     "done"
   ],
   "additionalProperties": false

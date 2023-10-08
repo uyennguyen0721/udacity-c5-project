@@ -1,7 +1,7 @@
 # TODO: Change the name of the org 
-org: uyent
-app: serverless-todo-app
-service: serverless-todo-app
+org: uyentt
+app: serverless-cart-app
+service: serverless-cart-app
 frameworkVersion: '3.35.2'
 
 plugins:
@@ -25,12 +25,12 @@ provider:
   # Use these variables in the functions and resouorces section below. For example, 
   # ${self:provider.environment.ATTACHMENT_S3_BUCKET}
   environment:
-    TODOS_TABLE: Todos-${self:provider.stage}
-    TODOS_CREATED_AT_INDEX: CreatedAtIndex
-    ATTACHMENT_S3_BUCKET: sdgsdffas-uyennguyen0721-todo-images-${self:provider.stage}
+    CARTS_TABLE: Carts-${self:provider.stage}
+    CARTS_CREATED_AT_INDEX: CreatedAtIndex
+    ATTACHMENT_S3_BUCKET: sdgsdffas-uyennguyen0721-cart-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 30000
     PROJECT_NAME: udacity-final-project
-    INDEX_NAME : ${self:provider.environment.TODOS_CREATED_AT_INDEX}
+    INDEX_NAME : ${self:provider.environment.CARTS_CREATED_AT_INDEX}
 
   logs:
     # Enable API Gateway logs
@@ -41,15 +41,15 @@ custom:
     api:
       info:
         version: v1.0.0
-        title: Todo API
+        title: Cart API
         description: serverless application
     models:
-      - name: CreateTodoRequest
+      - name: CreateCartRequest
         contentType: application/json
-        schema: ${file(models/create-todo-model.json)}
-      - name: UpdateTodoRequest
+        schema: ${file(models/create-cart-model.json)}
+      - name: UpdateCartRequest
         contentType: application/json
-        schema: ${file(models/update-todo-model.json)}
+        schema: ${file(models/update-cart-model.json)}
 
 functions:
 
@@ -59,24 +59,24 @@ functions:
   # TODO: Configure this function - 
   # Provide iamRoleStatements property for performing Actions on DynamoDB
   
-  GetTodos:
-    handler: src/lambda/http/getTodos.handler
+  GetCarts:
+    handler: src/lambda/http/getCarts.handler
     events:
       - http:
           method: get
-          path: todos
+          path: carts
           cors: true
           authorizer: Auth
-    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-get-todo-role-${self:provider.stage}
+    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-get-cart-role-${self:provider.stage}
     iamRoleStatements:
       - Effect: Allow
         Action:
           - dynamodb:Query
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CARTS_TABLE}
       - Effect: Allow
         Action:
           - dynamodb:Query
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODOS_CREATED_AT_INDEX}
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CARTS_TABLE}/index/${self:provider.environment.CARTS_CREATED_AT_INDEX}
       - Effect: Allow
         Action:
           - xray:PutTraceSegments
@@ -88,26 +88,26 @@ functions:
   # To refer to an AWS resource defined in the "Resources" section, you can use "Resource: !GetAtt <resource-name>.Arn"
   # To validate incoming HTTP requests, we have provided the request schemas in function definition below. 
   
-  CreateTodo:
-    handler: src/lambda/http/createTodo.handler
+  CreateCart:
+    handler: src/lambda/http/createCart.handler
     events:
       - http:
           method: post
-          path: todos
+          path: carts
           cors: true
           authorizer: Auth
           reqValidatorName: RequestBodyValidator
           documentation:
-            summary: Create a new todo
-            description: Create a new todo
+            summary: Create a new cart
+            description: Create a new cart
             requestModels:
-              'application/json': CreateTodoRequest
-    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-create-todo-role-${self:provider.stage}
+              'application/json': CreateCartRequest
+    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-create-cart-role-${self:provider.stage}
     iamRoleStatements:
       - Effect: Allow
         Action:
           - dynamodb:PutItem
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CARTS_TABLE}
       - Effect: Allow
         Action:
           - xray:PutTraceSegments
@@ -116,26 +116,26 @@ functions:
   # TODO: Configure this function
   # Provide property for setting up CORS, Authorizer, iamRoleStatements, and request schemas
   
-  UpdateTodo:
-    handler: src/lambda/http/updateTodo.handler
+  UpdateCart:
+    handler: src/lambda/http/updateCart.handler
     events:
       - http:
           method: patch
-          path: todos/{todoId}
+          path: carts/{cartId}
           cors: true
           authorizer: Auth
           reqValidatorName: RequestBodyValidator
           documentation:
-            summary: update a todo
-            description: update a new todo
+            summary: update a cart
+            description: update a new cart
             requestModels:
-              'application/json': UpdateTodoRequest
-    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-update-todo-role-${self:provider.stage}
+              'application/json': UpdateCartRequest
+    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-update-cart-role-${self:provider.stage}
     iamRoleStatements:
       - Effect: Allow
         Action:
           - dynamodb:UpdateItem
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CARTS_TABLE}
       - Effect: Allow
         Action:
           - xray:PutTraceSegments
@@ -145,19 +145,19 @@ functions:
   # Provide property for setting up CORS, Authorizer, iamRoleStatements
   
   DeleteTodo:
-    handler: src/lambda/http/deleteTodo.handler
+    handler: src/lambda/http/deleteCart.handler
     events:
       - http:
           method: delete
-          path: todos/{todoId}
+          path: carts/{cartId}
           cors: true
           authorizer: Auth
-    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-delete-todo-role-${self:provider.stage}
+    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-delete-cart-role-${self:provider.stage}
     iamRoleStatements:
       - Effect: Allow
         Action:
           - dynamodb:DeleteItem
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CARTS_TABLE}
       - Effect: Allow
         Action:
           - xray:PutTraceSegments
@@ -169,15 +169,15 @@ functions:
     events:
       - http:
           method: put
-          path: todos/{todoId}
+          path: carts/{cartId}
           cors: true
           authorizer: Auth
-    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-update-image-todo-role-${self:provider.stage}
+    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-update-image-cart-role-${self:provider.stage}
     iamRoleStatements:
       - Effect: Allow
         Action:
           - dynamodb:UpdateItem
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CARTS_TABLE}
       - Effect: Allow
         Action:
           - xray:PutTraceSegments
@@ -191,7 +191,7 @@ functions:
     events:
       - http:
           method: post
-          path: todos/{todoId}/attachment
+          path: carts/{cartId}/attachment
           cors: true
           authorizer: Auth
     iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-create-s3-upload-url-role-${self:provider.stage}
@@ -204,7 +204,7 @@ functions:
         Action:
           - dynamodb:Query
           - dynamodb:PutItem
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CARTS_TABLE}
       - Effect: Allow
         Action:
           - xray:PutTraceSegments
@@ -250,25 +250,25 @@ resources:
 
     # TODO: Create a DynamoDB table with local secondary index and a composite key
 
-    TodosTable:
+    CartsTable:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S
-          - AttributeName: todoId
+          - AttributeName: cartId
             AttributeType: S
           - AttributeName: createdAt
             AttributeType: S
         KeySchema:
             - AttributeName: userId
               KeyType: HASH
-            - AttributeName: todoId
+            - AttributeName: cartId
               KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
-        TableName: ${self:provider.environment.TODOS_TABLE}
+        TableName: ${self:provider.environment.CARTS_TABLE}
         LocalSecondaryIndexes:
-          - IndexName: ${self:provider.environment.TODOS_CREATED_AT_INDEX}
+          - IndexName: ${self:provider.environment.CARTS_CREATED_AT_INDEX}
             KeySchema:
               - AttributeName: userId
                 KeyType: HASH

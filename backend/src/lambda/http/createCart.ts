@@ -1,23 +1,23 @@
-import 'source-map-support/register'
-
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
+import 'source-map-support/register'
 import * as middy from 'middy'
 import { cors } from 'middy/middlewares'
-
-import { getTodosForUser as getTodosForUser } from '../../businessLogic/todos'
+import { CreateCartRequest } from '../../requests/CreateCartRequest'
 import { getUserId } from '../utils';
+import { createCart } from '../../businessLogic/carts'
 
-// TODO: Get all TODO items for a current user
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    // Write your code here
+    const newCart: CreateCartRequest = JSON.parse(event.body)
+    // TODO: Implement creating a new CART item
     const userId = getUserId(event)
-    const todos = await getTodosForUser(userId)
+
+    const newItem = await createCart(newCart, userId)
 
     return {
-      statusCode: 200,
+      statusCode: 201,
       body: JSON.stringify({
-        items: todos
+        item: newItem
       })
     }
   }
