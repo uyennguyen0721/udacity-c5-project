@@ -12,7 +12,8 @@ The application should store CART items, and each CART item contains the followi
 
 * `cartId` (string) - a unique id for an item
 * `createdAt` (string) - date and time when an item was created
-* `name` (string) - name of a CART item (e.g. "Change a light bulb")
+* `name` (string) - name of a CART item (e.g. "Milk")
+* `description` (string) - description of a CART item (e.g. "Drink")
 * `price` (string) - price of a CART item (e.g. "5$")
 * `done` (boolean) - true if an item was completed, false otherwise
 * `attachmentUrl` (string) (optional) - a URL pointing to an image attached to a CART item
