@@ -21,12 +21,15 @@ export async function createCart(
   idToken: string,
   newCart: CreateCartRequest
 ): Promise<Cart> {
+  console.log(`${apiEndpoint}/carts`)
+  console.log(JSON.stringify(newCart))
   const response = await Axios.post(`${apiEndpoint}/carts`, JSON.stringify(newCart), {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${idToken}`
     }
   })
+  console.log(response)
   return response.data.item
 }
 

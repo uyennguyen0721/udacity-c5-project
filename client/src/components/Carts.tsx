@@ -57,24 +57,25 @@ export class Carts extends React.PureComponent<CartsProps, CartsState> {
 
   onCartCreate = async () => {
     try {
-      if(this.state.newCartName !== '' && this.state.newCartPrice !== ''){
+      if(this.state.newCartName.trim() !== '' && this.state.newCartPrice.trim() !== ''){
         const newCart = await createCart(this.props.auth.getIdToken(), {
           name: this.state.newCartName,
-          price: this.state.newCartPrice,
-          description: this.state.newCartDescription
+          description: this.state.newCartDescription,
+          price: this.state.newCartPrice
         })
         this.setState({
           carts: [...this.state.carts, newCart],
           newCartName: '',
-          newCartPrice: '',
-          newCartDescription: ''
+          newCartDescription: '',
+          newCartPrice: ''
         })
       }
       else{
         alert('Name or price of new Cart must not empty!')
       }
       
-    } catch {
+    } catch (e) {
+      console.log(e)
       alert('Cart creation failed')
     }
   }
@@ -199,14 +200,14 @@ export class Carts extends React.PureComponent<CartsProps, CartsState> {
                   checked={cart.done}
                 />
               </Grid.Column>
-              <Grid.Column width={10} verticalAlign="middle">
+              <Grid.Column width={6} verticalAlign="middle">
                 {cart.name}
               </Grid.Column>
               <Grid.Column width={3} floated="right">
                 {cart.price}$
               </Grid.Column>
               <Grid.Column width={3} floated="right">
-                {cart.description}$
+                {cart.description}
               </Grid.Column>
               <Grid.Column width={1} floated="right">
                 <Button
