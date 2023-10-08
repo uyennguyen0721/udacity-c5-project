@@ -1,8 +1,8 @@
 # TODO: Change the name of the org 
-org: uyenn
+org: uyent
 app: serverless-todo-app
 service: serverless-todo-app
-frameworkVersion: '3.34.0'
+frameworkVersion: '3.35.2'
 
 plugins:
   - serverless-webpack
@@ -13,7 +13,7 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs14.x
+  runtime: nodejs16.x
   # lambdaHashingVersion: '20201221'
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
